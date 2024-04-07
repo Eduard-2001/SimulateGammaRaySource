@@ -1,0 +1,30 @@
+
+Processing Sigma.C...
+theta_2=0.025000	MC: 13.412823	Data: 9.000000
+theta_2=0.075000	MC: 1.684184	Data: 2.000000
+theta_2=0.125000	MC: 0.374296	Data: 0.000000
+theta_2=0.175000	MC: 0.168708	Data: 1.000000
+theta_2=0.225000	MC: 0.089316	Data: 0.000000
+theta_2=0.275000	MC: 0.065927	Data: 0.000000
+theta_2=0.325000	MC: 0.043588	Data: 0.000000
+theta_2=0.375000	MC: 0.031141	Data: 0.000000
+theta_2=0.425000	MC: 0.035180	Data: 0.000000
+theta_2=0.475000	MC: 0.034352	Data: 0.000000
+theta_2=0.525000	MC: 0.023653	Data: 0.000000
+theta_2=0.575000	MC: 0.020577	Data: 0.000000
+theta_2=0.625000	MC: 0.024942	Data: 0.000000
+theta_2=0.675000	MC: 0.016352	Data: 0.000000
+theta_2=0.725000	MC: 0.016987	Data: 0.000000
+theta_2=0.775000	MC: 0.007037	Data: 0.000000
+theta_2=0.825000	MC: 0.016401	Data: 0.000000
+theta_2=0.875000	MC: 0.009400	Data: 0.000000
+theta_2=0.925000	MC: 0.005351	Data: 1.000000
+theta_2=0.975000	MC: 0.006902	Data: 0.000000
+ FCN=5.78355 FROM MIGRAD    STATUS=FAILED        276 CALLS         277 TOTAL
+                     EDM=0.747117    STRATEGY= 1      ERR MATRIX NOT POS-DEF
+  EXT PARAMETER                APPROXIMATE        STEP         FIRST   
+  NO.   NAME      VALUE            ERROR          SIZE      DERIVATIVE 
+   1  p0           5.00031e+01   2.89094e+00   0.00000e+00  -3.76089e-01
+   2  p1           1.00008e-01   2.94105e-03   0.00000e+00  -2.34588e-01
+   3  p2           1.07231e-01   1.10103e-01   0.00000e+00  -1.34131e+01
+                               ERR DEF= 0.5
