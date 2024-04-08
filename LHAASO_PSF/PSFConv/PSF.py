@@ -87,7 +87,37 @@ def fitpsf(index,plot=False):
                 summap += tmpmap
                 
         return summap
-    return psfconv,bestfit
+
+    #以这个函数为准！
+    def psfconvnew(src,x,y):
+        '''
+        Args: 
+        1. src, sky map containing the source, without PSF
+        2. x,y:  1d array
+        
+        Returns: 
+        1. the sky map after convolution with PSF
+        '''
+        radius = 1 # 2度以外就视为psf没有贡献了
+        lenx = x.shape[0]
+        leny = y.shape[0]
+        midx = np.median(x)
+        midy = np.median(y)
+        ixl = np.argmin(np.abs(x-midx+radius)) #index_x_left, 卷积核对应x的最小坐标
+        ixr = np.argmin(np.abs(x-midx-radius))
+        iyl = np.argmin(np.abs(y-midy+radius))
+        iyr = np.argmin(np.abs(y-midy-radius))
+        #那么定义卷积核
+        xx,yy = np.meshgrid(x,y)
+        #卷积核为包含半径为radius的区域
+        r0 = np.sqrt((xx-midx)**2+(yy-midy)**2) #
+        kernel = gauss1d(r0[iyl:iyr,ixl:ixr],*bestfit) 
+        kernel = kernel/kernel.sum()#归一化
+
+        summap = scipy.signal.convolve2d(src,kernel,mode='same',boundary = 'fill',fillvalue=0)
+                
+        return summap
+    return psfconvnew#,bestfit
 
 def bindata(sky,x,y,pw):
     '''
