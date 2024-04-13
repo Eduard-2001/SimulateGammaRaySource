@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import healpy as hp
+import scipy
 
 def hms2ra(h,m,s):
     '''
@@ -93,7 +94,7 @@ def selectreg(ma,ra,dec,radius,NSIDE,Equat=True,dpar=30,dmer = 30,cmap='jet',xsi
                       cmap=cmap,
                       min = region.min(),
                       max = region.max(),
-                      xsize=xsize,
+                      xsize=xsize
                      )
     hp.graticule(dpar = dpar,dmer = dmer)
     plotGala(coord)
@@ -151,3 +152,33 @@ def allskymap(RA,DEC,FLUX,NSIDE,cmap='jet',Equat = True,Plot=False):
         hp.graticule()
         plotGala(coord)
     return m
+
+def selectreg_interp(ma,ra,dec,radius,NSIDE,plot=False,xsize = 800):
+    NP = hp.nside2npix(NSIDE)
+    maf = np.zeros(NP)
+    vec = hp.ang2vec(ra,dec,lonlat=True)
+    pixs = hp.query_disc(NSIDE,vec,radius*1.42/180*np.pi)
+    thetas,phis = hp.pix2ang(NSIDE,pixs)
+    maf[pixs] = hp.pixelfunc.get_interp_val(ma,thetas,phis)
+    roi = selectreg(maf,ra,dec,radius,NSIDE,plot=plot,xsize=xsize)
+    return roi
+
+def img2healpix(NSIDE_targ,NSIDE_fine,img):
+    NPIX = hp.nside2npix(NSIDE_targ)
+    phinewlen = NSIDE_fine*16
+    thetanewlen = NSIDE_fine*4
+    phi = np.linspace(0,np.pi*2,img.shape[1])
+    theta = np.linspace(0,np.pi,img.shape[0])
+    phinew = np.linspace(0,np.pi*2,phinewlen)
+    thetanew = np.linspace(0,np.pi,thetanewlen)
+    pphi,ttheta = np.meshgrid(phinew,thetanew)
+    pphi = pphi.flatten()
+    ttheta = ttheta.flatten()
+    imginterp = scipy.interpolate.RectBivariateSpline(theta,phi,img)
+    bkgdata_fine = imginterp(thetanew,phinew)
+    bkgdata_fine=bkgdata_fine.flatten()
+    
+    sky = np.zeros(NPIX)
+    pixs = hp.ang2pix(NSIDE_targ,ttheta,pphi)
+    sky[pixs] += bkgdata_fine[[i for i in range(pixs.shape[0])]]
+    return sky

@@ -89,7 +89,7 @@ def fitpsf(index,plot=False):
         return summap
 
     #以这个函数为准！
-    def psfconvnew(src,x,y):
+    def psfconvnew(src,x,y,psfradius=1):
         '''
         Args: 
         1. src, sky map containing the source, without PSF
@@ -98,7 +98,7 @@ def fitpsf(index,plot=False):
         Returns: 
         1. the sky map after convolution with PSF
         '''
-        radius = 1 # 2度以外就视为psf没有贡献了
+        radius = psfradius # 2度以外就视为psf没有贡献了
         lenx = x.shape[0]
         leny = y.shape[0]
         midx = np.median(x)
