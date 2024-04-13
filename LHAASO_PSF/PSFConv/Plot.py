@@ -50,7 +50,7 @@ def plotGala(coord='C'):
         none
     
     '''
-    rot = hp.Rotator(coord=['G', coord])
+    rot = hp.Rotator(coord=['G',coord])
     theta_g = np.ones(101)*np.pi/2
     phi_g = np.linspace(0,2*np.pi,101)
     theta_g_e,phi_g_e = rot(theta_g,phi_g)
