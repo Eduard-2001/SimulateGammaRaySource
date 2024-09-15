@@ -7,9 +7,10 @@ from scipy.optimize import curve_fit
 import tqdm
 import scipy
 
+def numint(x,y):
+    return np.sum((y[1:]+y[:-1])/2*(x[1:]-x[:-1]))
 
-
-def fitpsf(index,plot=False):
+def fitpsf(index,plot=False,printbestfit = False,randomPSF = False):
     '''
     Args:
     1. index, an integer, 
@@ -44,14 +45,25 @@ def fitpsf(index,plot=False):
 
     def gauss1d(x,sig1,amp1,sig2,amp2):
             return amp1 * 1/(np.sqrt(2 * np.pi)*sig1) * np.exp(-(x)**2/2/sig1**2)+amp2 * 1/(np.sqrt(2 * np.pi)*sig2) * np.exp(-(x)**2/2/sig2**2)
+    def singlegauss(x,sig1,amp1):
+        return amp1 * 1/(np.sqrt(2 * np.pi)*sig1) * np.exp(-(x)**2/2/sig1**2)
 
     bestfit,pcov = curve_fit(gauss1d,theta,density)
-
+    bestfit = np.array(bestfit)
+    
+    if randomPSF:
+        random_factor = np.random.uniform(0.8,1.2,bestfit.shape[0])
+        bestfit = bestfit*random_factor
+        
+    if printbestfit:
+        print(bestfit)
     
     if plot:
         x = np.linspace(0,2,201)
         plt.figure()
         plt.plot(x,gauss1d(x,*bestfit))
+        plt.plot(x,singlegauss(x,bestfit[0],bestfit[1]))
+        plt.plot(x,singlegauss(x,bestfit[2],bestfit[3]))
         plt.xlim(0,1.2)
         plt.scatter(theta,density)
         plt.title('best fit psf')
@@ -61,7 +73,7 @@ def fitpsf(index,plot=False):
         
     
     
-    def psfconv(src,x,y):
+    def targetconv(src,x,y,target_sig,psfradius=1,returnPSF = False):
         '''
         Args: 
         1. src, sky map containing the source, without PSF
@@ -70,26 +82,33 @@ def fitpsf(index,plot=False):
         Returns: 
         1. the sky map after convolution with PSF
         '''
+        radius = psfradius # 2度以外就视为psf没有贡献了
+        lenx = x.shape[0]
+        leny = y.shape[0]
+        midx = np.median(x)
+        midy = np.median(y)
+        ixl = np.argmin(np.abs(x-midx+radius)) #index_x_left, 卷积核对应x的最小坐标
+        ixr = np.argmin(np.abs(x-midx-radius))
+        iyl = np.argmin(np.abs(y-midy+radius))
+        iyr = np.argmin(np.abs(y-midy-radius))
+        #那么定义卷积核
         xx,yy = np.meshgrid(x,y)
-        summap = np.zeros(src.shape)
-        r0 = np.sqrt(xx**2+yy**2)
-        tmpmap = gauss1d(r0,*bestfit)
-        norm = 1/tmpmap.sum()
-        #print('norm %.2f'%norm)
-        
-        for i in tqdm.trange(src.shape[0]):
-            for j in range(src.shape[1]):
-                if src[i,j] == 0:
-                    continue
-                r = np.sqrt((xx-xx[0,j])**2 +(yy-yy[i,0])**2)
-                tmpmap = gauss1d(r,*bestfit) * norm * src[i,j]
-                #tmpmap = np.where(r > theta[-1] , 0, tmpmap)
-                summap += tmpmap
-                
+        #卷积核为包含半径为radius的区域
+        r0 = np.sqrt((xx-midx)**2+(yy-midy)**2) #
+        kernel = singlegauss(r0[iyl:iyr,ixl:ixr],target_sig,amp1 = 1)
+        #kernel = gauss1d(r0[iyl:iyr,ixl:ixr],*bestfit) 
+        kernel = kernel/kernel.sum()#归一化
+
+        summap = scipy.signal.convolve2d(src,kernel,mode='same',boundary = 'fill',fillvalue=0)
+        if returnPSF: 
+            psfx = np.linspace(0,psfradius,101)
+            psfy = singlegauss(psfx,target_sig,amp1 = 1)
+            norm = 2 * np.pi * numint(psfx,psfx * psfy)
+            return summap,(psfx,psfy/norm)
         return summap
 
     #以这个函数为准！
-    def psfconvnew(src,x,y,psfradius=1):
+    def psfconvnew(src,x,y,psfradius=1,returnPSF = False):
         '''
         Args: 
         1. src, sky map containing the source, without PSF
@@ -115,9 +134,13 @@ def fitpsf(index,plot=False):
         kernel = kernel/kernel.sum()#归一化
 
         summap = scipy.signal.convolve2d(src,kernel,mode='same',boundary = 'fill',fillvalue=0)
-                
+        if returnPSF: 
+            psfx = np.linspace(0,psfradius,101)
+            psfy = gauss1d(psfx,*bestfit)
+            norm = 2 * np.pi * numint(psfx,psfx * psfy)
+            return summap,(psfx,psfy/norm)
         return summap
-    return psfconvnew#,bestfit
+    return psfconvnew,targetconv#,bestfit
 
 def bindata(sky,x,y,pw):
     '''
