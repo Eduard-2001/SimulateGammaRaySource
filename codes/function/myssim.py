@@ -7,8 +7,8 @@ def ssim_function(img1, img2, window_size=11, data_range=255.0, sigma=1.5):
     K2 = 0.03
 
     # 将图像转换为numpy数组
-    img1 = np.array(img1).astype(np.float32)
-    img2 = np.array(img2).astype(np.float32)
+    #img1 = np.array(img1.astype(np.float32)
+    #img2 = np.array(img2).astype(np.float32)
 
     # 计算SSIM的常数
     C1 = (K1 * data_range) ** 2

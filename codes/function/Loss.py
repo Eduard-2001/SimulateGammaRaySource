@@ -36,7 +36,9 @@ class Custom_criterion(nn.Module):
         ssim = ssim_loss * self.ssim_weight
         #psnr = psnr_loss * self.psnr_weight
         #l1 = l1_loss * self.l1_weight
-        return mse + ssim
-        return self.mse_weight * mse_loss + self.ssim_weight * ssim_loss
-        return self.mse_weight * mse_loss + self.ssim_weight * ssim_loss + self.psnr_weight * psnr_loss
+
+        return ssim_loss
+        #return mse + ssim
+        #return self.mse_weight * mse_loss + self.ssim_weight * ssim_loss
+        #return self.mse_weight * mse_loss + self.ssim_weight * ssim_loss + self.psnr_weight * psnr_loss
 

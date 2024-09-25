@@ -8,7 +8,7 @@ current_directory = os.getcwd()
 root_directory = os.path.dirname(current_directory)
 
 class ImageDataset(Dataset):
-    def __init__(self, num_to_learn, mode):
+    def __init__(self, num_to_learn, mode,path_data,inverse=False):
         self.transform = transforms.Compose([
             transforms.ToTensor(),
         ])
@@ -16,7 +16,7 @@ class ImageDataset(Dataset):
         
         #path_blurry = os.path.join(root_directory, "SimulatedData", "blurred.npy")
         #path_original = os.path.join(root_directory, "SimulatedData", "original.npy")
-        path_data = os.path.join(root_directory, "SimulatedData", "rand_PSF.npy")
+        #path_data = os.path.join(root_directory, "SimulatedData", "rand_PSF.npy")
         
         #if not os.path.exists(path_blurry) or not os.path.exists(path_original):
         #    raise FileNotFoundError("Blurry or Original data file not found.")
@@ -28,9 +28,16 @@ class ImageDataset(Dataset):
         datas = np.load(path_data,allow_pickle=True)#.astype(np.object)
         blurry_datas = np.stack(datas[:,1])
         original_datas = np.stack(datas[:,0])
-        
-        
-        for i in range(num_to_learn):
+
+        if inverse == False:
+            idx_beg = 0;
+            idx_end = num_to_learn;
+        else:
+            idx_beg = num_to_learn;
+            idx_end = blurry_datas.shape[0];
+
+
+        for i in range(idx_beg,idx_end):
             blurry_data = blurry_datas[i]
             original_data = original_datas[i]
             
