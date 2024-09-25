@@ -14,15 +14,22 @@ class ImageDataset(Dataset):
         ])
         self.data = []
         
-        path_blurry = os.path.join(root_directory, "SimulatedData", "blurred.npy")
-        path_original = os.path.join(root_directory, "SimulatedData", "original.npy")
+        #path_blurry = os.path.join(root_directory, "SimulatedData", "blurred.npy")
+        #path_original = os.path.join(root_directory, "SimulatedData", "original.npy")
+        path_data = os.path.join(root_directory, "SimulatedData", "rand_PSF.npy")
         
-        if not os.path.exists(path_blurry) or not os.path.exists(path_original):
+        #if not os.path.exists(path_blurry) or not os.path.exists(path_original):
+        #    raise FileNotFoundError("Blurry or Original data file not found.")
+        if not os.path.exists(path_data):
             raise FileNotFoundError("Blurry or Original data file not found.")
         
-        blurry_datas = np.load(path_blurry).astype(np.float32)
-        original_datas = np.load(path_original).astype(np.float32)
-
+        #blurry_datas = np.load(path_blurry).astype(np.float32)
+        #original_datas = np.load(path_original).astype(np.float32)
+        datas = np.load(path_data,allow_pickle=True)#.astype(np.object)
+        blurry_datas = np.stack(datas[:,1])
+        original_datas = np.stack(datas[:,0])
+        
+        
         for i in range(num_to_learn):
             blurry_data = blurry_datas[i]
             original_data = original_datas[i]
