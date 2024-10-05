@@ -1,0 +1,15 @@
+Experiment name: EXP_0_1
+Epoch [1/200], Average Loss: 0.002054, Test Loss: 0.000464, Current_LR:0.0005
+Epoch [2/200], Average Loss: 0.000603, Test Loss: 0.000370, Current_LR:0.0005
+Epoch [3/200], Average Loss: 0.000511, Test Loss: 0.000274, Current_LR:0.0005
+Epoch [4/200], Average Loss: 0.000384, Test Loss: 0.000262, Current_LR:0.0005
+Epoch [5/200], Average Loss: 0.000386, Test Loss: 0.000233, Current_LR:0.0005
+Epoch [6/200], Average Loss: 0.000324, Test Loss: 0.000219, Current_LR:0.0005
+Epoch [7/200], Average Loss: 0.000313, Test Loss: 0.000222, Current_LR:0.0005
+Epoch [8/200], Average Loss: 0.000303, Test Loss: 0.000217, Current_LR:0.0005
+Epoch [9/200], Average Loss: 0.000274, Test Loss: 0.000232, Current_LR:0.0005
+Epoch [10/200], Average Loss: 0.000260, Test Loss: 0.000236, Current_LR:0.0005
+Epoch [11/200], Average Loss: 0.000253, Test Loss: 0.000184, Current_LR:0.0005
+Epoch [12/200], Average Loss: 0.000276, Test Loss: 0.000191, Current_LR:0.0005
+Epoch [13/200], Average Loss: 0.000261, Test Loss: 0.000184, Current_LR:0.0005
+Epoch [14/200], Average Loss: 0.000255, Test Loss: 0.000183, Current_LR:0.0005
